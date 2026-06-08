@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexis Vega - Historia en Toluca FC</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+    color:#333;
+}
+
+header{
+    height:100vh;
+    background:
+    linear-gradient(rgba(120,0,0,.75),rgba(0,0,0,.75)),
+    url('https://images.unsplash.com/photo-1574629810360-7efbbe195018');
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+}
+
+.hero{
+    max-width:800px;
+    padding:20px;
+}
+
+.hero h1{
+    font-size:4rem;
+    margin-bottom:15px;
+}
+
+.hero p{
+    font-size:1.3rem;
+}
+
+.btn{
+    margin-top:25px;
+    display:inline-block;
+    padding:12px 30px;
+    background:#d90429;
+    color:white;
+    text-decoration:none;
+    border-radius:30px;
+    transition:.3s;
+}
+
+.btn:hover{
+    background:#ef233c;
+    transform:translateY(-3px);
+}
+
+section{
+    padding:80px 10%;
+}
+
+.titulo{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.titulo h2{
+    font-size:2.5rem;
+    color:#a00000;
+}
+
+.historia{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    align-items:center;
+}
+
+.historia img{
+    width:100%;
+    border-radius:15px;
+    box-shadow:0 10px 20px rgba(0,0,0,.2);
+}
+
+.historia p{
+    line-height:1.8;
+    font-size:1.1rem;
+}
+
+.timeline{
+    position:relative;
+    max-width:900px;
+    margin:auto;
+}
+
+.timeline::after{
+    content:'';
+    position:absolute;
+    width:4px;
+    background:#d90429;
+    top:0;
+    bottom:0;
+    left:50%;
+    margin-left:-2px;
+}
+
+.container{
+    padding:15px 40px;
+    position:relative;
+    width:50%;
+}
+
+.left{
+    left:0;
+}
+
+.right{
+    left:50%;
+}
+
+.content{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    cursor:pointer;
+    transition:.3s;
+}
+
+.content:hover{
+    transform:scale(1.05);
+}
+
+.container::after{
+    content:'';
+    position:absolute;
+    width:20px;
+    height:20px;
+    right:-10px;
+    background:#d90429;
+    border-radius:50%;
+    top:25px;
+}
+
+.right::after{
+    left:-10px;
+}
+
+.galeria{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.galeria img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    border-radius:15px;
+    cursor:pointer;
+    transition:.4s;
+}
+
+.galeria img:hover{
+    transform:scale(1.05);
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    text-align:center;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.card h3{
+    font-size:2rem;
+    color:#d90429;
+}
+
+footer{
+    background:#7a0000;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.9);
+}
+
+.modal img{
+    display:block;
+    margin:auto;
+    margin-top:5%;
+    max-width:85%;
+    max-height:80%;
+    border-radius:10px;
+}
+
+.close{
+    position:absolute;
+    top:20px;
+    right:40px;
+    color:white;
+    font-size:40px;
+    cursor:pointer;
+}
+
+@media(max-width:768px){
+
+.timeline::after{
+left:20px;
+}
+
+.container{
+width:100%;
+padding-left:60px;
+padding-right:15px;
+}
+
+.right{
+left:0;
+}
+
+.left::after,
+.right::after{
+left:10px;
+}
+
+.historia{
+grid-template-columns:1fr;
+}
+
+.hero h1{
+font-size:2.8rem;
+}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="hero">
+<h1>Alexis Vega</h1>
+<p>La historia de una de las figuras más importantes del fútbol mexicano y del Deportivo Toluca FC.</p>
+<a href="#historia" class="btn">Conocer su historia</a>
+</div>
+</header>
+
+<section id="historia">
+
+<div class="titulo">
+<h2>Historia</h2>
+</div>
+
+<div class="historia">
+
+<img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974">
+
+<div>
+<p>
+Alexis Vega nació el 25 de noviembre de 1997 en Ciudad de México. Desde muy joven mostró grandes condiciones futbolísticas y comenzó su formación profesional en las fuerzas básicas del Deportivo Toluca.
+</p>
+
+<br>
+
+<p>
+Debutó en Primera División con Toluca y rápidamente destacó por su velocidad, habilidad en el uno contra uno y capacidad goleadora. Gracias a sus actuaciones llamó la atención de diversos clubes de la Liga MX.
+</p>
+
+<br>
+
+<p>
+Tras una etapa importante en Guadalajara, Alexis regresó a Toluca para convertirse nuevamente en referente ofensivo del equipo escarlata, siendo uno de los jugadores más queridos por la afición.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section style="background:#ececec;">
+
+<div class="titulo">
+<h2>Línea del Tiempo</h2>
+</div>
+
+<div class="timeline">
+
+<div class="container left">
+<div class="content" onclick="mostrar('2016: Debut profesional con Toluca FC.')">
+<h3>2016</h3>
+<p>Debut en Primera División.</p>
+</div>
+</div>
+
+<div class="container right">
+<div class="content" onclick="mostrar('2018: Se consolida como una de las promesas del fútbol mexicano.')">
+<h3>2018</h3>
+<p>Consolidación.</p>
+</div>
+</div>
+
+<div class="container left">
+<div class="content" onclick="mostrar('2019: Llegada a Chivas y crecimiento mediático.')">
+<h3>2019</h3>
+<p>Nueva etapa.</p>
+</div>
+</div>
+
+<div class="container right">
+<div class="content" onclick="mostrar('2022: Participación con la Selección Mexicana en competencias internacionales.')">
+<h3>2022</h3>
+<p>Selección Mexicana.</p>
+</div>
+</div>
+
+<div class="container left">
+<div class="content" onclick="mostrar('2024: Regreso a Toluca y liderazgo ofensivo.')">
+<h3>2024</h3>
+<p>Regreso a casa.</p>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<section>
+
+<div class="titulo">
+<h2>Galería</h2>
+</div>
+
+<div class="galeria">
+
+<img src="https://images.unsplash.com/photo-1551958219-acbc608c6377" onclick="abrir(this.src)">
+
+<img src="https://images.unsplash.com/photo-1518604666860-9ed391f76460" onclick="abrir(this.src)">
+
+<img src="https://images.unsplash.com/photo-1547347298-4074fc3086f0" onclick="abrir(this.src)">
+
+<img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68" onclick="abrir(this.src)">
+
+</div>
+
+</section>
+
+<section style="background:#ececec;">
+
+<div class="titulo">
+<h2>Datos Destacados</h2>
+</div>
+
+<div class="stats">
+
+<div class="card">
+<h3>⚽</h3>
+<p>Delantero y extremo ofensivo.</p>
+</div>
+
+<div class="card">
+<h3>🇲🇽</h3>
+<p>Seleccionado nacional mexicano.</p>
+</div>
+
+<div class="card">
+<h3>🔴</h3>
+<p>Figura del Deportivo Toluca FC.</p>
+</div>
+
+<div class="card">
+<h3>🏆</h3>
+<p>Reconocido por su talento y liderazgo.</p>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+<h3>Alexis Vega | Sitio Fan Interactivo</h3>
+<p>Diseño profesional HTML, CSS y JavaScript.</p>
+</footer>
+
+<div id="modal" class="modal">
+<span class="close" onclick="cerrar()">&times;</span>
+<img id="imgModal">
+</div>
+
+<script>
+
+function mostrar(texto){
+    alert(texto);
+}
+
+function abrir(src){
+    document.getElementById("modal").style.display="block";
+    document.getElementById("imgModal").src=src;
+}
+
+function cerrar(){
+    document.getElementById("modal").style.display="none";
+}
+
+window.onclick=function(event){
+    let modal=document.getElementById("modal");
+    if(event.target==modal){
+        modal.style.display="none";
+    }
+}
+
+</script>
+
+</body>
+</html>
