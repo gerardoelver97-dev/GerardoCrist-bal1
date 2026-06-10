@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memorama Interactivo</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
+
+h1{
+    color:white;
+    margin-bottom:15px;
+}
+
+.info{
+    color:white;
+    font-size:22px;
+    margin-bottom:15px;
+}
+
+.game{
+    display:grid;
+    grid-template-columns:repeat(5,120px);
+    gap:10px;
+}
+
+.card{
+    width:120px;
+    height:120px;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.6s;
+    cursor:pointer;
+}
+
+.card.flip{
+    transform:rotateY(180deg);
+}
+
+.face{
+    width:100%;
+    height:100%;
+    position:absolute;
+    border-radius:10px;
+    backface-visibility:hidden;
+}
+
+.front{
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:42px;
+    font-weight:bold;
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+}
+
+.back{
+    transform:rotateY(180deg);
+    overflow:hidden;
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+}
+
+.back img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+#mensaje{
+    margin-top:20px;
+    color:white;
+    font-size:28px;
+    font-weight:bold;
+}
+
+button{
+    margin-top:20px;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:18px;
+    background:white;
+    font-weight:bold;
+}
+
+@media(max-width:700px){
+    .game{
+        grid-template-columns:repeat(4,90px);
+    }
+
+    .card{
+        width:90px;
+        height:90px;
+    }
+}
+</style>
+</head>
+<body>
+
+<h1>🧠 MEMORAMA INTERACTIVO</h1>
+
+<div class="info">
+    Movimientos: <span id="moves">0</span>
+</div>
+
+<div class="game" id="game"></div>
+
+<div id="mensaje"></div>
+
+<button onclick="startGame()">🔄 Reiniciar</button>
+
+<script>
+
+const images = [
+    "https://picsum.photos/id/1011/200",
+    "https://picsum.photos/id/1025/200",
+    "https://picsum.photos/id/1035/200",
+    "https://picsum.photos/id/1043/200",
+    "https://picsum.photos/id/1050/200",
+    "https://picsum.photos/id/1062/200",
+    "https://picsum.photos/id/1074/200",
+    "https://picsum.photos/id/1084/200",
+    "https://picsum.photos/id/1080/200",
+    "https://picsum.photos/id/1090/200",
+
+    "https://picsum.photos/id/1011/200",
+    "https://picsum.photos/id/1025/200",
+    "https://picsum.photos/id/1035/200",
+    "https://picsum.photos/id/1043/200",
+    "https://picsum.photos/id/1050/200",
+    "https://picsum.photos/id/1062/200",
+    "https://picsum.photos/id/1074/200",
+    "https://picsum.photos/id/1084/200",
+    "https://picsum.photos/id/1080/200",
+    "https://picsum.photos/id/1090/200"
+];
+
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let moves = 0;
+let matches = 0;
+
+function shuffle(array){
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function startGame(){
+
+    const game = document.getElementById("game");
+    game.innerHTML = "";
+
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+    moves = 0;
+    matches = 0;
+
+    document.getElementById("moves").textContent = "0";
+    document.getElementById("mensaje").textContent = "";
+
+    const shuffled = shuffle([...images]);
+
+    shuffled.forEach(image => {
+
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.image = image;
+
+        card.innerHTML = `
+            <div class="face front">?</div>
+            <div class="face back">
+                <img src="${image}">
+            </div>
+        `;
+
+        card.addEventListener("click", flipCard);
+
+        game.appendChild(card);
+    });
+}
+
+function flipCard(){
+
+    if(lockBoard) return;
+    if(this === firstCard) return;
+
+    this.classList.add("flip");
+
+    if(!firstCard){
+        firstCard = this;
+        return;
+    }
+
+    secondCard = this;
+    moves++;
+
+    document.getElementById("moves").textContent = moves;
+
+    checkMatch();
+}
+
+function checkMatch(){
+
+    const match =
+        firstCard.dataset.image === secondCard.dataset.image;
+
+    if(match){
+
+        firstCard.removeEventListener("click", flipCard);
+        secondCard.removeEventListener("click", flipCard);
+
+        matches++;
+
+        if(matches === 10){
+
+            document.getElementById("mensaje").textContent =
+            "🏆 ¡FELICIDADES! COMPLETASTE EL MEMORAMA";
+        }
+
+        resetBoard();
+
+    }else{
+
+        lockBoard = true;
+
+        setTimeout(() => {
+
+            firstCard.classList.remove("flip");
+            secondCard.classList.remove("flip");
+
+            resetBoard();
+
+        }, 1000);
+    }
+}
+
+function resetBoard(){
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+}
+
+startGame();
+
+</script>
+
+</body>
+</html>
