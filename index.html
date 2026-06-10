@@ -3,264 +3,263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fútbol Pong</title>
+<title>Memorama Interactivo</title>
 
 <style>
-body{
+*{
     margin:0;
-    background:#0d5f1c;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
     display:flex;
     flex-direction:column;
     align-items:center;
-    font-family:Arial,sans-serif;
-    color:white;
+    min-height:100vh;
+    padding:20px;
 }
 
 h1{
-    margin:10px;
+    color:white;
+    margin-bottom:15px;
 }
 
-#menu{
-    margin-bottom:10px;
+.info{
+    color:white;
+    font-size:22px;
+    margin-bottom:15px;
 }
 
-canvas{
-    border:4px solid white;
-    background:#1c8a32;
+.game{
+    display:grid;
+    grid-template-columns:repeat(5,120px);
+    gap:10px;
+}
+
+.card{
+    width:120px;
+    height:120px;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.6s;
+    cursor:pointer;
+}
+
+.card.flip{
+    transform:rotateY(180deg);
+}
+
+.face{
+    width:100%;
+    height:100%;
+    position:absolute;
+    border-radius:10px;
+    backface-visibility:hidden;
+}
+
+.front{
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:42px;
+    font-weight:bold;
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+}
+
+.back{
+    transform:rotateY(180deg);
+    overflow:hidden;
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+}
+
+.back img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+#mensaje{
+    margin-top:20px;
+    color:white;
+    font-size:28px;
+    font-weight:bold;
 }
 
 button{
-    padding:8px 15px;
-    font-size:16px;
+    margin-top:20px;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
     cursor:pointer;
+    font-size:18px;
+    background:white;
+    font-weight:bold;
+}
+
+@media(max-width:700px){
+    .game{
+        grid-template-columns:repeat(4,90px);
+    }
+
+    .card{
+        width:90px;
+        height:90px;
+    }
 }
 </style>
 </head>
 <body>
 
-<h1>⚽ Fútbol Pong ⚽</h1>
+<h1>🧠 MEMORAMA INTERACTIVO</h1>
 
-<div id="menu">
-    <button id="modeBtn">Modo: IA</button>
+<div class="info">
+    Movimientos: <span id="moves">0</span>
 </div>
 
-<canvas id="game" width="900" height="500"></canvas>
+<div class="game" id="game"></div>
+
+<div id="mensaje"></div>
+
+<button onclick="startGame()">🔄 Reiniciar</button>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
 
-let iaMode = true;
+const images = [
+    "https://picsum.photos/id/1011/200",
+    "https://picsum.photos/id/1025/200",
+    "https://picsum.photos/id/1035/200",
+    "https://picsum.photos/id/1043/200",
+    "https://picsum.photos/id/1050/200",
+    "https://picsum.photos/id/1062/200",
+    "https://picsum.photos/id/1074/200",
+    "https://picsum.photos/id/1084/200",
+    "https://picsum.photos/id/1080/200",
+    "https://picsum.photos/id/1090/200",
 
-document.getElementById("modeBtn").onclick = () => {
-    iaMode = !iaMode;
-    document.getElementById("modeBtn").innerText =
-        iaMode ? "Modo: IA" : "Modo: 2 Jugadores";
-};
+    "https://picsum.photos/id/1011/200",
+    "https://picsum.photos/id/1025/200",
+    "https://picsum.photos/id/1035/200",
+    "https://picsum.photos/id/1043/200",
+    "https://picsum.photos/id/1050/200",
+    "https://picsum.photos/id/1062/200",
+    "https://picsum.photos/id/1074/200",
+    "https://picsum.photos/id/1084/200",
+    "https://picsum.photos/id/1080/200",
+    "https://picsum.photos/id/1090/200"
+];
 
-const paddleWidth = 15;
-const paddleHeight = 100;
-const ballSize = 15;
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let moves = 0;
+let matches = 0;
 
-const leftPlayer = {
-    x:20,
-    y:200,
-    speed:7,
-    score:0
-};
-
-const rightPlayer = {
-    x:canvas.width - 35,
-    y:200,
-    speed:7,
-    score:0
-};
-
-const ball = {
-    x:canvas.width/2,
-    y:canvas.height/2,
-    vx:5,
-    vy:3
-};
-
-const keys = {};
-
-document.addEventListener("keydown", e=>{
-    keys[e.key] = true;
-});
-
-document.addEventListener("keyup", e=>{
-    keys[e.key] = false;
-});
-
-function resetBall(){
-    ball.x = canvas.width/2;
-    ball.y = canvas.height/2;
-
-    ball.vx = (Math.random()>0.5 ? 5 : -5);
-    ball.vy = (Math.random()*6)-3;
+function shuffle(array){
+    return array.sort(() => Math.random() - 0.5);
 }
 
-function drawField(){
+function startGame(){
 
-    ctx.fillStyle="#1c8a32";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    const game = document.getElementById("game");
+    game.innerHTML = "";
 
-    ctx.strokeStyle="white";
-    ctx.lineWidth=3;
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+    moves = 0;
+    matches = 0;
 
-    ctx.strokeRect(0,0,canvas.width,canvas.height);
+    document.getElementById("moves").textContent = "0";
+    document.getElementById("mensaje").textContent = "";
 
-    ctx.beginPath();
-    ctx.moveTo(canvas.width/2,0);
-    ctx.lineTo(canvas.width/2,canvas.height);
-    ctx.stroke();
+    const shuffled = shuffle([...images]);
 
-    ctx.beginPath();
-    ctx.arc(canvas.width/2,canvas.height/2,70,0,Math.PI*2);
-    ctx.stroke();
+    shuffled.forEach(image => {
+
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.image = image;
+
+        card.innerHTML = `
+            <div class="face front">?</div>
+            <div class="face back">
+                <img src="${image}">
+            </div>
+        `;
+
+        card.addEventListener("click", flipCard);
+
+        game.appendChild(card);
+    });
 }
 
-function drawPlayers(){
+function flipCard(){
 
-    ctx.fillStyle="blue";
-    ctx.fillRect(
-        leftPlayer.x,
-        leftPlayer.y,
-        paddleWidth,
-        paddleHeight
-    );
+    if(lockBoard) return;
+    if(this === firstCard) return;
 
-    ctx.fillStyle="red";
-    ctx.fillRect(
-        rightPlayer.x,
-        rightPlayer.y,
-        paddleWidth,
-        paddleHeight
-    );
+    this.classList.add("flip");
+
+    if(!firstCard){
+        firstCard = this;
+        return;
+    }
+
+    secondCard = this;
+    moves++;
+
+    document.getElementById("moves").textContent = moves;
+
+    checkMatch();
 }
 
-function drawBall(){
-    ctx.fillStyle="white";
-    ctx.beginPath();
-    ctx.arc(ball.x, ball.y, ballSize, 0, Math.PI*2);
-    ctx.fill();
-}
+function checkMatch(){
 
-function drawScore(){
-    ctx.font="40px Arial";
-    ctx.fillStyle="white";
+    const match =
+        firstCard.dataset.image === secondCard.dataset.image;
 
-    ctx.fillText(
-        leftPlayer.score,
-        canvas.width/2 - 80,
-        50
-    );
+    if(match){
 
-    ctx.fillText(
-        rightPlayer.score,
-        canvas.width/2 + 50,
-        50
-    );
-}
+        firstCard.removeEventListener("click", flipCard);
+        secondCard.removeEventListener("click", flipCard);
 
-function updatePlayers(){
+        matches++;
 
-    // Jugador izquierdo
-    if(keys["w"] || keys["W"])
-        leftPlayer.y -= leftPlayer.speed;
+        if(matches === 10){
 
-    if(keys["s"] || keys["S"])
-        leftPlayer.y += leftPlayer.speed;
+            document.getElementById("mensaje").textContent =
+            "🏆 ¡FELICIDADES! COMPLETASTE EL MEMORAMA";
+        }
 
-    leftPlayer.y = Math.max(
-        0,
-        Math.min(canvas.height-paddleHeight,leftPlayer.y)
-    );
-
-    if(iaMode){
-
-        let center =
-            rightPlayer.y + paddleHeight/2;
-
-        if(ball.y < center - 10)
-            rightPlayer.y -= 5;
-
-        if(ball.y > center + 10)
-            rightPlayer.y += 5;
+        resetBoard();
 
     }else{
 
-        if(keys["ArrowUp"])
-            rightPlayer.y -= rightPlayer.speed;
+        lockBoard = true;
 
-        if(keys["ArrowDown"])
-            rightPlayer.y += rightPlayer.speed;
-    }
+        setTimeout(() => {
 
-    rightPlayer.y = Math.max(
-        0,
-        Math.min(canvas.height-paddleHeight,rightPlayer.y)
-    );
-}
+            firstCard.classList.remove("flip");
+            secondCard.classList.remove("flip");
 
-function updateBall(){
+            resetBoard();
 
-    ball.x += ball.vx;
-    ball.y += ball.vy;
-
-    if(ball.y-ballSize < 0 ||
-       ball.y+ballSize > canvas.height){
-        ball.vy *= -1;
-    }
-
-    // Colisión izquierda
-    if(
-        ball.x-ballSize < leftPlayer.x+paddleWidth &&
-        ball.y > leftPlayer.y &&
-        ball.y < leftPlayer.y+paddleHeight
-    ){
-        ball.vx *= -1.1;
-    }
-
-    // Colisión derecha
-    if(
-        ball.x+ballSize > rightPlayer.x &&
-        ball.y > rightPlayer.y &&
-        ball.y < rightPlayer.y+paddleHeight
-    ){
-        ball.vx *= -1.1;
-    }
-
-    // Gol derecha
-    if(ball.x < 0){
-        rightPlayer.score++;
-        resetBall();
-    }
-
-    // Gol izquierda
-    if(ball.x > canvas.width){
-        leftPlayer.score++;
-        resetBall();
+        }, 1000);
     }
 }
 
-function gameLoop(){
-
-    drawField();
-
-    updatePlayers();
-    updateBall();
-
-    drawPlayers();
-    drawBall();
-    drawScore();
-
-    requestAnimationFrame(gameLoop);
+function resetBoard(){
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
 }
 
-resetBall();
-gameLoop();
+startGame();
+
 </script>
 
 </body>
